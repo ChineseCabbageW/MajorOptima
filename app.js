@@ -190,12 +190,13 @@
         </div>
       `;
 
-      // 绑定选择事件
       area.querySelectorAll('.pair-option').forEach(btn => {
         btn.addEventListener('click', () => {
           area.querySelectorAll('.pair-option').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           AppState.riasec.answers[index] = { chosen: btn.dataset.type };
+          btn.blur();
+          document.activeElement.blur();
           setTimeout(() => $('#riasecNext').click(), 300);
         });
       });
@@ -261,6 +262,8 @@
           if (lvl) {
             descBox.innerHTML = `<strong>${lvl.label}</strong>：${lvl.desc}`;
           }
+          btn.blur();
+          document.activeElement.blur();
           setTimeout(() => $('#abilityNext').click(), 400);
         });
       });
@@ -311,6 +314,8 @@
           area.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           AppState.values.answers[index] = parseInt(btn.dataset.index, 10);
+          btn.blur();
+          document.activeElement.blur();
           setTimeout(() => $('#valuesNext').click(), 300);
         });
       });
@@ -360,6 +365,8 @@
             rawValue: rawValue,
             value: finalValue
           };
+          btn.blur();
+          document.activeElement.blur();
           setTimeout(() => $('#personalityNext').click(), 300);
         });
       });
@@ -374,11 +381,13 @@
       if (el) el.textContent = `${index + 1} / ${total}`;
     },
 
-    // --- 通用：更新导航按钮状态 ---
     updateNavState(section, index, total) {
       const prevBtn = $(`#${section}Prev`);
       const nextBtn = $(`#${section}Next`);
       if (prevBtn) {
+        if (section === 'riasec') {
+          prevBtn.style.visibility = 'visible';
+        }
         if (index === 0) {
           prevBtn.textContent = '← 返回上一步';
         } else {
@@ -691,108 +700,97 @@
       const categories = DATA.majorCategories || [];
       categories.forEach(cat => {
         (cat.majors || []).forEach(major => {
-          let score = 0;
+        let riasecScore = 0;
 
-          // RIASEC 匹配
-          if (major.riasecTypes) {
-            dominantTypes.forEach((t, i) => {
-              if (major.riasecTypes.includes(t)) score += (3 - i) * 2;
-            });
+        // RIASEC 匹配
+        if (major.riasecTypes) {
+          dominantTypes.forEach((t, i) => {
+            if (major.riasecTypes.includes(t)) riasecScore += (3 - i) * 2;
+          });
+        }
+
+        // 选科约束
+        let isSubjectValid = true;
+        if (constraints.subjectCombo.length > 0 && major.subjectRequired) {
+          const hasRequired = major.subjectRequired.some(s => constraints.subjectCombo.includes(s));
+          if (!hasRequired) isSubjectValid = false;
+        }
+
+        if (isSubjectValid) {
+          // 大五人格映射: 简单匹配逻辑
+          let bigFiveScore = 0;
+          if (personality) {
+             const bfMapping = {
+               "01": { O: 4, C: 3, E: 3, A: 3, N: 3 }, // 哲学
+               "02": { O: 3, C: 4, E: 4, A: 3, N: 3 }, // 经济
+               "03": { O: 3, C: 4, E: 4, A: 4, N: 3 }, // 法学
+               "04": { O: 4, C: 4, E: 4, A: 5, N: 2 }, // 教育
+               "05": { O: 5, C: 3, E: 3, A: 3, N: 3 }, // 文学
+               "06": { O: 4, C: 3, E: 3, A: 3, N: 3 }, // 历史
+               "07": { O: 5, C: 4, E: 2, A: 3, N: 3 }, // 理学
+               "08": { O: 4, C: 5, E: 3, A: 3, N: 3 }, // 工学
+               "09": { O: 3, C: 4, E: 3, A: 3, N: 3 }, // 农学
+               "10": { O: 4, C: 5, E: 4, A: 5, N: 2 }, // 医学
+               "11": { O: 3, C: 5, E: 5, A: 4, N: 3 }, // 管理
+               "12": { O: 5, C: 3, E: 4, A: 3, N: 4 }  // 艺术
+             };
+             const targetBF = bfMapping[cat.code];
+             if (targetBF) {
+               let diff = 0;
+               ['O','C','E','A','N'].forEach(dim => {
+                 diff += Math.abs((personality[dim] || 3) - targetBF[dim]);
+               });
+               bigFiveScore = Math.max(0, 1 - (diff / 15)); 
+             } else {
+               bigFiveScore = 0.5;
+             }
           }
-
-          // 能力匹配
+          
+          // 归一化其他分数
+          // RIASEC
+          const riasecNorm = Math.min(1, riasecScore / 12);
+          
+          // Ability (引入溢出梯度加分)
+          let abilityScore = 0;
+          let abilityMax = 0;
           if (major.abilityNeeds && ability) {
             Object.entries(major.abilityNeeds).forEach(([dim, level]) => {
+              abilityMax += 1;
               const userLevel = ability[dim] || 3;
-              if (userLevel >= level) score += 1;
+              if (userLevel > level) {
+                abilityScore += 1 + 0.1 * (userLevel - level); // 超出部分奖励
+              } else if (userLevel === level) {
+                abilityScore += 1;
+              } else if (userLevel === level - 1) {
+                abilityScore += 0.5;
+              }
             });
           }
-
-          // 价值观匹配
+          const abilityNorm = abilityMax > 0 ? abilityScore / abilityMax : 0.5;
+          
+          // Values
+          let valuesScore = 0;
+          let valuesMax = 0;
           if (major.valuesFit && values.length > 0) {
             const topValues = values.slice(0, 3).map(v => v.key);
             major.valuesFit.forEach(v => {
-              if (topValues.includes(v)) score += 1.5;
+              valuesMax += 1;
+              if (topValues.includes(v)) valuesScore += 1;
             });
           }
+          const valuesNorm = valuesMax > 0 ? valuesScore / valuesMax : 0.5;
+          
+          // 最终加权：RIASEC 40%, Ability 25%, Values 20%, BigFive 15%
+          const finalScore = Math.min(100, (riasecNorm * 0.4 + abilityNorm * 0.25 + valuesNorm * 0.2 + bigFiveScore * 0.15) * 100);
 
-          // 选科约束
-          let isSubjectValid = true;
-          if (constraints.subjectCombo.length > 0 && major.subjectRequired) {
-            const hasRequired = major.subjectRequired.some(s => constraints.subjectCombo.includes(s));
-            if (!hasRequired) isSubjectValid = false;
+          if (finalScore > 0) {
+            matchedMajors.push({
+              ...major,
+              category: cat.name,
+              matchScore: finalScore
+            });
           }
-
-          if (isSubjectValid) {
-            // 大五人格映射: 简单匹配逻辑
-            let bigFiveScore = 0;
-            if (personality) {
-               const bfMapping = {
-                 "01": { O: 4, C: 3, E: 3, A: 3, N: 3 }, // 哲学
-                 "02": { O: 3, C: 4, E: 4, A: 3, N: 3 }, // 经济
-                 "03": { O: 3, C: 4, E: 4, A: 4, N: 3 }, // 法学
-                 "04": { O: 4, C: 4, E: 4, A: 5, N: 2 }, // 教育
-                 "05": { O: 5, C: 3, E: 3, A: 3, N: 3 }, // 文学
-                 "06": { O: 4, C: 3, E: 3, A: 3, N: 3 }, // 历史
-                 "07": { O: 5, C: 4, E: 2, A: 3, N: 3 }, // 理学
-                 "08": { O: 4, C: 5, E: 3, A: 3, N: 3 }, // 工学
-                 "09": { O: 3, C: 4, E: 3, A: 3, N: 3 }, // 农学
-                 "10": { O: 4, C: 5, E: 4, A: 5, N: 2 }, // 医学
-                 "11": { O: 3, C: 5, E: 5, A: 4, N: 3 }, // 管理
-                 "12": { O: 5, C: 3, E: 4, A: 3, N: 4 }  // 艺术
-               };
-               const targetBF = bfMapping[cat.code];
-               if (targetBF) {
-                 let diff = 0;
-                 ['O','C','E','A','N'].forEach(dim => {
-                   diff += Math.abs((personality[dim] || 3) - targetBF[dim]);
-                 });
-                 bigFiveScore = Math.max(0, 1 - (diff / 15)); 
-               } else {
-                 bigFiveScore = 0.5;
-               }
-            }
-            
-            // 归一化其他分数
-            // RIASEC
-            const riasecNorm = Math.min(1, score / 12);
-            
-            // Ability
-            let abilityScore = 0;
-            let abilityMax = 0;
-            if (major.abilityNeeds && ability) {
-              Object.entries(major.abilityNeeds).forEach(([dim, level]) => {
-                abilityMax += 1;
-                const userLevel = ability[dim] || 3;
-                if (userLevel >= level) abilityScore += 1;
-                else if (userLevel === level - 1) abilityScore += 0.5;
-              });
-            }
-            const abilityNorm = abilityMax > 0 ? abilityScore / abilityMax : 0.5;
-            
-            // Values
-            let valuesScore = 0;
-            let valuesMax = 0;
-            if (major.valuesFit && values.length > 0) {
-              const topValues = values.slice(0, 3).map(v => v.key);
-              major.valuesFit.forEach(v => {
-                valuesMax += 1;
-                if (topValues.includes(v)) valuesScore += 1;
-              });
-            }
-            const valuesNorm = valuesMax > 0 ? valuesScore / valuesMax : 0.5;
-            
-            // 最终加权：RIASEC 40%, Ability 25%, Values 20%, BigFive 15%
-            const finalScore = (riasecNorm * 0.4 + abilityNorm * 0.25 + valuesNorm * 0.2 + bigFiveScore * 0.15) * 100;
-
-            if (finalScore > 0) {
-              matchedMajors.push({
-                ...major,
-                category: cat.name,
-                matchScore: finalScore
-              });
-            }
-          }
+        }
         });
       });
 
@@ -978,12 +976,22 @@
         
         // 经济合理约束警告
         const econLevel = AppState.results && AppState.results.constraints ? AppState.results.constraints.economicLevel : '';
-        const isEconWarning = econLevel === 'low' && gradNeed === '高';
-        const warningHtml = isEconWarning ? `
-          <div style="margin-top: 12px; padding: 6px 10px; background: rgba(231, 76, 60, 0.1); border-left: 3px solid #e74c3c; color: #c0392b; font-size: 0.8rem; border-radius: 4px; font-weight: 500;">
-            ⚠️ 学制长/建议考研，请结合家庭经济状况理性选择
-          </div>
-        ` : '';
+        let warningHtml = '';
+        if (econLevel === 'low') {
+          if (gradNeed === '高') {
+            warningHtml = `
+              <div class="econ-warning-danger">
+                ⚠️ 学制长/建议考研，请结合家庭财务与时间成本理性选择
+              </div>
+            `;
+          } else if (gradNeed === '中') {
+            warningHtml = `
+              <div class="econ-warning-warning">
+                💡 该专业考研比例较高，建议结合长线学业投入成本理性考量
+              </div>
+            `;
+          }
+        }
 
         return `
           <div class="major-card fade-in" style="animation-delay: ${i * 0.08}s">

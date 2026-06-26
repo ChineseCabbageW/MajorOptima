@@ -1029,8 +1029,42 @@ html[data-theme='dark'] .option-btn.selected {
 }
 
 /* ============================================================
-   17. 标签
+   17. 标签 & 预警样式
    ============================================================ */
+.econ-warning-danger {
+  margin-top: var(--space-md);
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+html[data-theme='dark'] .econ-warning-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.econ-warning-warning {
+  margin-top: var(--space-md);
+  padding: 10px 14px;
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 4px solid #f59e0b;
+  color: #b45309;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+html[data-theme='dark'] .econ-warning-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde047;
+}
+
 .tag {
   display: inline-flex;
   align-items: center;
@@ -1947,3 +1981,154 @@ button:focus-visible,
 /* ============================================================
    结束 🎉
    ============================================================ */
+
+/* ============================================================
+   新版报告与交互页面微调样式
+   ============================================================ */
+
+/* 1. 价值观结果排版 */
+.values-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.value-rank-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.value-rank-medal {
+  font-size: 1.25rem;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.value-rank-label {
+  width: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.value-rank-bar {
+  flex-grow: 1;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+html[data-theme='dark'] .value-rank-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.value-rank-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #a78bfa 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 2. 性格特质光谱排版 */
+.personality-result {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .personality-result {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+.personality-dimension {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background: rgba(255, 255, 255, 0.5);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+html[data-theme='dark'] .personality-dimension {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.personality-dim-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.personality-spectrum {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: 4px;
+}
+
+.spectrum-pole {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  width: 65px;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.spectrum-pole.active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.spectrum-bar {
+  flex-grow: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-full);
+  position: relative;
+}
+
+html[data-theme='dark'] .spectrum-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.spectrum-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-theme='dark'] .spectrum-indicator {
+  border-color: var(--color-bg);
+}
+
+/* 3. 选项列表间距（解决第三站和第四站选择贴合问题） */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  width: 100%;
+}
+
