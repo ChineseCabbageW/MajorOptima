@@ -1000,6 +1000,7 @@
               <span class="major-card-category">${m.category || ''}</span>
             </div>
             <div class="major-card-body">
+              ${warningHtml}
               <p class="major-card-desc">${m.description || ''}</p>
               <div class="major-card-detail">
                 <div class="detail-item">
@@ -1015,7 +1016,6 @@
                 <span class="tag">💰 薪资 ${salaryText}</span>
                 <span class="tag ${gradTag}">🎓 考研 ${gradNeed}</span>
               </div>
-              ${warningHtml}
             </div>
           </div>
         `;

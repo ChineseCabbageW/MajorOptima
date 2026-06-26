@@ -1032,7 +1032,7 @@ html[data-theme='dark'] .option-btn.selected {
    17. 标签 & 预警样式
    ============================================================ */
 .econ-warning-danger {
-  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
   padding: 10px 14px;
   background: rgba(239, 68, 68, 0.08);
   border-left: 4px solid #ef4444;
@@ -1049,7 +1049,7 @@ html[data-theme='dark'] .econ-warning-danger {
 }
 
 .econ-warning-warning {
-  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
   padding: 10px 14px;
   background: rgba(245, 158, 11, 0.08);
   border-left: 4px solid #f59e0b;
