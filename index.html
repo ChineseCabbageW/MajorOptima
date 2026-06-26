@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="科学的高考志愿填报引导工具，帮助高中毕业生通过兴趣探索、能力评估、价值观分析等多维度评测，找到最适合自己的大学专业方向。">
+  <title>专业探索罗盘 — 找到属于你的方向</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=14">
+</head>
+<body>
+
+  <!-- ========== 顶部导航栏 ========== -->
+  <header class="app-header">
+    <div class="logo">
+      <span class="logo-icon">🧭</span>
+      <span class="logo-text">专业探索罗盘</span>
+    </div>
+    <div class="app-header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="切换主题"></button>
+    </div>
+  </header>
+
+  <!-- ========== 进度条 ========== -->
+  <div class="progress-bar-container" id="progressContainer">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="step-indicators" id="stepIndicators">
+      <!-- JS 动态生成 -->
+    </div>
+  </div>
+
+  <!-- ========== 主内容区域 ========== -->
+  <main class="main-content" id="mainContent">
+
+    <!-- 步骤0: 欢迎页 -->
+    <section class="screen welcome-screen active" id="screen-welcome">
+      <div class="hero-section">
+        <div class="emoji-icon">🚀</div>
+        <h1>找到属于你的专业方向</h1>
+        <p class="subtitle">
+          高考结束了，恭喜你！接下来的选择同样重要。<br>
+          这个工具会像一个耐心的学长一样，陪你一起探索——<br>
+          你的兴趣、能力、价值观，以及那些真正适合你的专业。
+        </p>
+        <div class="hero-features">
+          <div class="hero-feature-item">
+            <span class="emoji-icon">🎯</span>
+            <span class="feature-text">7个维度全面评估</span>
+          </div>
+          <div class="hero-feature-item">
+            <span class="emoji-icon">⏱️</span>
+            <span class="feature-text">约15-20分钟完成</span>
+          </div>
+          <div class="hero-feature-item">
+            <span class="emoji-icon">📊</span>
+            <span class="feature-text">可视化结果报告</span>
+          </div>
+          <div class="hero-feature-item">
+            <span class="emoji-icon">🔒</span>
+            <span class="feature-text">数据仅保存在本地</span>
+          </div>
+        </div>
+        <button class="btn-primary btn-large" id="startBtn">
+          开始探索之旅 ✨
+        </button>
+        <p class="hero-note">适合学生自用，也可以和家长、老师一起完成</p>
+      </div>
+    </section>
+
+    <!-- 步骤1: 兴趣探索 (RIASEC) -->
+    <section class="screen" id="screen-riasec">
+      <div class="screen-inner">
+        <div class="section-header">
+          <span class="section-emoji">❤️</span>
+          <h2 class="section-title">第一站：兴趣探索</h2>
+          <p class="section-subtitle">不要考虑能不能赚钱，只凭直觉选择你更喜欢做的事情。</p>
+        </div>
+        <div class="question-area" id="riasecQuestionArea">
+          <!-- JS 动态渲染 -->
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" id="riasecPrev" style="visibility: hidden;">← 上一题</button>
+          <span class="question-counter" id="riasecCounter">1 / 15</span>
+          <button class="btn-primary" id="riasecNext">下一题 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤2: 能力评估 -->
+    <section class="screen" id="screen-ability">
+      <div class="screen-inner">
+        <div class="section-header">
+          <span class="section-emoji">💪</span>
+          <h2 class="section-title">第二站：能力盘点</h2>
+          <p class="section-subtitle">客观评估你目前的各项能力水平。不需要全能，每个人都有自己的强项。</p>
+        </div>
+        <div class="question-area" id="abilityQuestionArea">
+          <!-- JS 动态渲染 -->
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" id="abilityPrev">← 上一题</button>
+          <span class="question-counter" id="abilityCounter">1 / 7</span>
+          <button class="btn-primary" id="abilityNext">下一题 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤3: 价值观排序 -->
+    <section class="screen" id="screen-values">
+      <div class="screen-inner">
+        <div class="section-header">
+          <span class="section-emoji">💎</span>
+          <h2 class="section-title">第三站：价值观优先级</h2>
+          <p class="section-subtitle">在未来的工作中，你最看重什么？请诚实面对内心的渴望。</p>
+        </div>
+        <div class="question-area" id="valuesQuestionArea">
+          <!-- JS 动态渲染 -->
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" id="valuesPrev">← 上一题</button>
+          <span class="question-counter" id="valuesCounter">1 / 5</span>
+          <button class="btn-primary" id="valuesNext">下一题 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤4: 性格特质 -->
+    <section class="screen" id="screen-personality">
+      <div class="screen-inner">
+        <div class="section-header">
+          <span class="section-emoji">🧩</span>
+          <h2 class="section-title">第四站：大五人格画像</h2>
+          <p class="section-subtitle">基于心理学中最具实证效度的“大五人格(Big Five)”理论，评估你的性格偏好（1分代表非常不符合，5分代表非常符合）。</p>
+        </div>
+        <div class="question-area" id="personalityQuestionArea">
+          <!-- JS 动态渲染 -->
+        </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" id="personalityPrev">← 上一题</button>
+          <span class="question-counter" id="personalityCounter">1 / 10</span>
+          <button class="btn-primary" id="personalityNext">下一题 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤5: 现实约束 -->
+    <section class="screen" id="screen-constraints">
+      <div class="screen-inner">
+        <div class="section-header">
+          <span class="section-emoji">🏠</span>
+          <h2 class="section-title">第五站：现实考量</h2>
+          <p class="section-subtitle">理想很重要，但也要考虑一些现实因素。这不是限制，而是帮你做更明智的选择。</p>
+        </div>
+        <div class="constraint-form" id="constraintForm">
+          <div class="form-group">
+            <label class="form-label">📊 你的高考预估分数区间</label>
+            <select class="form-select" id="scoreRange">
+              <option value="">请选择...</option>
+              <option value="top5">全省前5%（顶尖985）</option>
+              <option value="top15">全省前5%-15%（985/强211）</option>
+              <option value="top30">全省前15%-30%（211/强双非）</option>
+              <option value="top60">全省前30%-60%（普通一本/二本）</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">💰 家庭经济支持力度</label>
+            <select class="form-select" id="economicLevel">
+              <option value="">请选择...</option>
+              <option value="high">很充裕（能支持出国或长线烧钱专业）</option>
+              <option value="medium">一般（能正常供完本科，考研需考量）</option>
+              <option value="low">较困难（希望专业好就业，尽早独立）</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🌍 出国留学意向</label>
+            <select class="form-select" id="studyAbroad">
+              <option value="">请选择...</option>
+              <option value="yes">有明确计划</option>
+              <option value="maybe">看情况再说</option>
+              <option value="no">基本不考虑</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">🏫 新高考选科情况（多选）</label>
+            <div class="chip-group" id="subjectCombo">
+              <button class="chip" data-value="physics">物理</button>
+              <button class="chip" data-value="history">历史</button>
+              <button class="chip" data-value="chemistry">化学</button>
+              <button class="chip" data-value="biology">生物</button>
+              <button class="chip" data-value="geography">地理</button>
+              <button class="chip" data-value="politics">政治</button>
+            </div>
+            <p class="form-hint" style="margin-top:8px;font-size:0.85rem;color:var(--text-tertiary)">如果不确定，可以先不选。</p>
+          </div>
+        </div>
+        <div class="nav-buttons" style="justify-content: space-between; margin-top: 40px;">
+          <button class="btn-secondary" id="constraintsPrev">← 返回</button>
+          <button class="btn-primary btn-large" id="generateReportBtn">生成我的专业报告 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 步骤6: 结果页 -->
+    <section class="screen" id="screen-results">
+      <div class="screen-inner report-page" id="reportPage">
+        <div class="section-header">
+          <span class="section-emoji">🎓</span>
+          <h2 class="section-title">你的专业探索报告</h2>
+          <p class="section-subtitle">基于你的回答，这是我们为你梳理的方向建议</p>
+        </div>
+
+        <!-- 兴趣雷达图 -->
+        <div class="result-section">
+          <h3 class="result-section-title">🔍 兴趣画像 (RIASEC)</h3>
+          <div class="radar-chart-container">
+            <canvas id="radarChart" width="400" height="400"></canvas>
+          </div>
+          <div class="riasec-summary" id="riasecSummary">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 能力柱状图 -->
+        <div class="result-section">
+          <h3 class="result-section-title">💪 能力优势</h3>
+          <div class="bar-chart-container">
+            <canvas id="barChart" width="600" height="300"></canvas>
+          </div>
+        </div>
+
+        <!-- 价值观排序 -->
+        <div class="result-section">
+          <h3 class="result-section-title">💎 价值观优先级</h3>
+          <div class="values-result" id="valuesResult">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 性格画像 -->
+        <div class="result-section">
+          <h3 class="result-section-title">🧩 性格特质</h3>
+          <div class="personality-result" id="personalityResult">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 通俗方向推荐 -->
+        <div class="result-section">
+          <h3 class="result-section-title">🎯 推荐方向</h3>
+          <p class="result-intro">根据你的综合画像，以下方向可能很适合你：</p>
+          <div class="popular-categories-grid" id="popularCategoriesGrid">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 具体专业推荐 -->
+        <div class="result-section">
+          <h3 class="result-section-title">📋 具体专业推荐</h3>
+          <div class="major-cards-grid" id="majorCardsGrid">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 踩坑警示 -->
+        <div class="result-section">
+          <h3 class="result-section-title">⚠️ 选专业避坑指南</h3>
+          <div class="pitfalls-grid" id="pitfallsGrid">
+            <!-- JS 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 导出操作 -->
+        <div class="result-section export-section">
+          <h3 class="result-section-title">📄 保存你的报告</h3>
+          <div class="export-buttons">
+            <button class="btn-primary" id="btnPrint">🖨️ 打印/保存为PDF</button>
+            <button class="btn-secondary" id="btnRestart">🔄 重新测评</button>
+          </div>
+          <p class="export-note">提示：点击「打印」后，在打印对话框中选择「另存为PDF」即可保存电子版。</p>
+          <div style="margin-top: 24px; padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; color: #856404; font-size: 0.9rem; border-radius: 4px;">
+            <strong>免责声明：</strong> 本报告提供的各项匹配度（百分比）是基于职业心理学框架（RIASEC、能力、价值观及大五人格）使用加权算法生成的预估值。页面中展示的专业薪资、考研建议等数据参考自麦可思等公开大学生就业报告，仅供参考，不构成绝对的升学与就业指导依据。
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== 页脚 ========== -->
+  <footer class="app-footer" id="appFooter">
+    <p>© 2024 专业选择测评系统 | <span style="opacity: 0.7;">科学指引，理性填报</span></p>
+    <p>数据来源：教育部学科门类目录 · 霍兰德职业兴趣理论 · 麦可思就业报告</p>
+  </footer>
+
+  <!-- ========== 脚本 ========== -->
+  <script src="data.js?v=15"></script>
+  <script src="app.js?v=15"></script>
+
+</body>
+</html>
